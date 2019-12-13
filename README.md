@@ -1,2 +1,2 @@
-# JuegaConmigo
+# Naxito
 Proyecto Raspeberry
