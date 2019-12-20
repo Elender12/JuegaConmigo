@@ -4,6 +4,7 @@ import smbus
 import time
 import random
 
+#************************************INITIALISE THE LCD DISPLAY************************************
 # Define some device parameters
 I2C_ADDR  = 0x27 # I2C device address, if any error, change t       his address to 0x27
 LCD_WIDTH = 16   # Maximum characters per line
@@ -86,12 +87,8 @@ def lcd_string(message,line):
 connMath = RawConnection()
 def ProcessIRRemote():
 
-    #get IR command
-    #keypress format = (hexcode, repeat_num, command_key, remote_id)
     try:
-        #keypress=""
         keypress = connMath.readline(.0001)
-        #keypress = connMath.readline()
     except:
         keypress=""
 
@@ -102,18 +99,14 @@ def ProcessIRRemote():
         sequence = data[1]
         #command = data[2]
         command = data[2]
-        print(command,"command dentro del process irRemote")
-
         #ignore command repeats
         if (sequence != "00"):
            return
-
         return(command)
 
 def sumar():
     num1 = random.randint(1,99)
     num2 = random.randint(1,99)
-    #lcd_string(str(num1)+ "+"+str(num2),LCD_LINE_1)
     operacion = str(num1)+" + "+str(num2)
     res = num1+num2
     #capturar resultado del usuario
@@ -137,48 +130,29 @@ def multiplicar():
     operacion = str(num1)+" * "+str(num2)
     return res, operacion
 
-#command = ProcessIRRemote()
-#command =""
 def flushh():
     for i in range(0,16):
         command = ProcessIRRemote()
         command=None
     pass
 
-connMath = RawConnection() #esto iba fuera
+connMath = RawConnection()
 def remoteResult(operacion):
     var=""
     userRes=0
-    print(var,"el valor de variable al inicio")
-    #print(command,"el valor de command")
-    #print("dentro de remoteResult")
     command = ProcessIRRemote()
 
     flushh()
-    '''
-    while command != None:
-        command = ProcessIRRemote()
-        command=None
-    '''
+
     while True:
         lcd_string(operacion+" = ?",LCD_LINE_1)
         lcd_string(var,LCD_LINE_2)
-        print(var,"el valor de variable dentro del while true ")
-        #var=""
-        #command= None
-        #command = ProcessIRRemote()
-        #print(command,"el valor de command la 1a vez que lo lee")
-        #command= None
-        print(command,"el valor de command igual al none")
         command = ProcessIRRemote()
-        print(command,"el valor de command dentro del while true que no hace ni caso a lo de arriba")
-        #time.sleep(3)
         if(command == "KEY_0"):
             var+="0"
         if(command == "KEY_1"):
             var+="1"
         if(command == "KEY_2"):
-            #print(var,"el valor var en el if key=2")
             var+="2"
         if(command == "KEY_3"):
             var+="3"
@@ -203,9 +177,6 @@ def remoteResult(operacion):
             lcd_byte(0x01, LCD_CMD)
             flushh()
             break
-    #command = ProcessIRRemote()
-    #command=""
-    #print(userRes, "user res tiene el valor")
     return userRes
 
 def mainCalc():
@@ -221,7 +192,6 @@ def mainCalc():
     while cont<5:
         cont+=1
         choice = random.randint(1,3)
-        #choice= 1
         if choice==1:
             res,operacion = sumar()
             userRes = remoteResult(operacion)
@@ -242,7 +212,6 @@ def mainCalc():
             else:
                 lcd_string(" -INCORRECT-",LCD_LINE_1)
                 time.sleep(3)
-            #print(res)
         elif choice==3:
             res, operacion = multiplicar()
             userRes = remoteResult(operacion)
@@ -253,7 +222,6 @@ def mainCalc():
             else:
                 lcd_string(" -INCORRECT-",LCD_LINE_1)
                 time.sleep(3)
-            #print(res)
         else:
             lcd_string(" -E R R O R-",LCD_LINE_1)
             time.sleep(3)
@@ -261,6 +229,7 @@ def mainCalc():
     lcd_string("> "+str(Vcont),LCD_LINE_2)
     time.sleep(3)
 
+#************************************FINAL BLOCK************************************
 '''
 try:
     mainCalc()

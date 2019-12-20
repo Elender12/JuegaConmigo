@@ -6,16 +6,18 @@ import time
 import random
 from calculadora_loca import mainCalc
 from hermano_sinonimo import mainSynonym
-#testMain= calculadora_loca.mainCalc
 
+
+#************************************INITIALISE THE LCD DISPLAY AND GPIOS************************************
 # Define some device parameters
 I2C_ADDR  = 0x27 # I2C device address, if any error, change this address to 0x27
 LCD_WIDTH = 16   # Maximum characters per line
+
+# Define the GPIOs and turn off the leds by the .toggle
 FEED_BUTTON = Button(26)
 GREEN_PIN = LED(23)
 YELLOW_PIN = LED(18)
 RED_PIN = LED(25)
-
 GREEN_PIN.toggle()
 YELLOW_PIN.toggle()
 RED_PIN.toggle()
@@ -23,15 +25,12 @@ RED_PIN.toggle()
 # Define some device constants
 LCD_CHR = 1 # Mode - Sending data
 LCD_CMD = 0 # Mode - Sending command
-
 LCD_LINE_1 = 0x80 # LCD RAM address for the 1st line
 LCD_LINE_2 = 0xC0 # LCD RAM address for the 2nd line
 LCD_LINE_3 = 0x94 # LCD RAM address for the 3rd line
 LCD_LINE_4 = 0xD4 # LCD RAM address for the 4th line
-
 LCD_BACKLIGHT  = 0x08  # On
 #LCD_BACKLIGHT = 0x00  # Off
-
 ENABLE = 0b00000100 # Enable bit
 
 # Timing constants
@@ -95,7 +94,7 @@ def lcd_string(message,line):
     for i in range(LCD_WIDTH):
         lcd_byte(ord(message[i]),LCD_CHR)
 
-#******************CUIDADO CON LO DE ABAJO******************
+#************************************IR REMOTE LOGIC************************************
 conn = RawConnection()
 def ProcessIRRemote():
     keypress= ""
@@ -111,27 +110,17 @@ def ProcessIRRemote():
         data = keypress.split()
         sequence = data[1]
         command = data[2]
-
         #ignore command repeats
         if (sequence != "00"):
            return
-
         return(command)
 
-
-
-#DORMIR= "KEY_0"
-#COMER= "KEY_1"
-#JUGAR= "KEY_2"
-#command=""
 #devuelve lo que el usuario responde
 def remoteResult():
     respuestaUsuario=""
     flushh2()
-    #command = ProcessIRRemote()  #ultimo añadido de modificaciones
     command=None
     while True:
-        #time.sleep(0.2)
         command = ProcessIRRemote()
         print("valor de comando en el main",command)
         if(command == "KEY_0"):
@@ -150,9 +139,6 @@ def remoteResult():
             #el usuario manda a Naxito a jugar
             respuestaUsuario= "SALIR"
             break
-
-
-    #command= None
     return respuestaUsuario
 
 def flushh2():
@@ -160,7 +146,7 @@ def flushh2():
         command = ProcessIRRemote()
         command=None
     pass
-
+#************************************MAIN MENU************************************
 def main():
     contComer=0
     contDormir=0
@@ -168,7 +154,6 @@ def main():
 
     lcd_init()
     lcd_string("  (^ . ^)/ ",LCD_LINE_1)
-    #lcd_string(126,LCD_LINE_1)
     lcd_string("> I'm Naxito! <3",LCD_LINE_2)
     time.sleep(3)
     flushh2()
@@ -177,16 +162,11 @@ def main():
 def naxitosLife(contComer,contDormir,contJugar):
     lcd_string(" d(^ . ^)b ",LCD_LINE_1)
     lcd_string("What can i do?",LCD_LINE_2)
-    time.sleep(2) #antes no estaba
-    #llamar metodo limpieza
+    time.sleep(2)
 
-    #command=None
-    #print("estamos en naxitosLife metodo")
     flushh2()
     command = remoteResult()
-    #print(command, "suicidio colectivo del command")
 
-    #print("valor de comando en naxito life",command)
     #para dormir
     if  command == "DORMIR":
         #command=""
@@ -218,7 +198,6 @@ def naxitosLife(contComer,contDormir,contJugar):
         lcd_string(" (^ . ^)",LCD_LINE_1)
         lcd_string("Gimme food",LCD_LINE_2)
         #cuando le da al botón:
-        #print(command,"el valor de command en el if de comer")
         command=""
         while True:
             if FEED_BUTTON.is_pressed:
@@ -268,11 +247,8 @@ def naxitosLife(contComer,contDormir,contJugar):
         lcd_string("  (o - o) ?",LCD_LINE_1)
         lcd_string("..a GAME!",LCD_LINE_2)
         time.sleep(1.5)
-        #command= ProcessIRRemote()
-        #command = None
 
         choice = random.randint(1,2)
-        #choice=1
         print(choice)
         while True:
             if choice == 1:
@@ -287,24 +263,23 @@ def naxitosLife(contComer,contDormir,contJugar):
                 break
 
         flushh2()
-        #print(contComer,"el valor de contador comida")
         GREEN_PIN.toggle()
-        #command=""
-        #command = None
         naxitosLife(contComer,contDormir,contJugar)
+
     if command == "JUGAR" and contComer<1:
         lcd_string("  ('- _ -) ",LCD_LINE_1)
         lcd_string(" I am HUNGRY!",LCD_LINE_2)
         time.sleep(2)
         command=""
         naxitosLife(contComer,contDormir,contJugar)
+
     if command == "SALIR":
         lcd_string("  (n _ n) ",LCD_LINE_1)
         lcd_string(" Goodbye!!",LCD_LINE_2)
         time.sleep(2)
 
 
-#*************BLOQUE FINAL*************
+##************************************FINAL BLOCK************************************
 try:
     main()
 except KeyboardInterrupt:

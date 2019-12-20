@@ -4,6 +4,9 @@ import smbus
 import time
 import random
 
+
+#************************************INITIALISE LCD DISPLAY************************************
+
 # Define some device parameters
 I2C_ADDR  = 0x27 # I2C device address, if any error, change t       his address to 0x27
 LCD_WIDTH = 16   # Maximum characters per line
@@ -110,11 +113,7 @@ sinonimos1= ["vasto","calumnia","baladi","perfidia","hosco","ofuscar","disyuntiv
 #muestra una de las palabras en la linea 2
 sinonimos2=["amplio","falsedad","insignificante","traicion","aspero","perturbar","dilema","ralo","anverso","bizarro"]
 
-#muestro las claves
-#print(diccionarioVerificacion.keys())
-#print(sinonimos1[0],sinonimos2[2])
-
-#******************CUIDADO CON LO DE ABAJO******************
+#************************************CUIDADO CON LO DE ABAJO************************************
 conn = RawConnection()
 def verificarRespuesta(palabra1, palabra2):
     #diccionario de verificacion
@@ -132,10 +131,8 @@ def verificarRespuesta(palabra1, palabra2):
 
     if valor == palabra2:
         return True
-        #print("son sinonimos")
     else:
         return False
-        #print("nope")
 
 def mainSynonym():
     print("Running...❤")
@@ -146,7 +143,6 @@ def mainSynonym():
     time.sleep(5)
     cont=0
     Vcont=0
-    #print(sinonimos1[aleatorio1],sinonimos2[aleatorio2])
     #recoger la respuesta
     #KEY_VOLUMEDOWN  negativo - no son sinonimos
     #KEY_VOLUMEUP positivo- son sinonimos
@@ -194,7 +190,7 @@ def remoteResult():
     return respuestaUsuario
 
 
-#*************BLOQUE FINAL*************
+#************************************FINAL BLOCK************************************
 '''try:
     main()
 except KeyboardInterrupt:
