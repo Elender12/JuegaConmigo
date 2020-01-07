@@ -4,8 +4,8 @@ import RPi.GPIO as GPIO
 import smbus
 import time
 import random
-from calculadora_loca_test import mainCalc
-from hermano_sinonimo_test import mainSynonym
+from calculadora_loca import mainCalc
+from hermano_sinonimo import mainSynonym
 import os
 
 
@@ -252,6 +252,7 @@ def naxitosLife(contComer,contDormir,contJugar):
                 if contComer==5:
                     lcd_string("  (X ___ x)",LCD_LINE_1)
                     lcd_string("    -D E A D-",LCD_LINE_2)
+                    saveData(0,0,0)
                     time.sleep(2)
                     RED_PIN.toggle()
                     exit()
